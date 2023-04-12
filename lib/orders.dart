@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class BillboardOrder {
   final String orderId;
-  final DateTime startDate;
-  final DateTime endDate;
+  final String startDate;
+  final String endDate;
   final String location;
-  final double cost;
+  final String cost;
   final String type;
   final String size;
   final String status;
@@ -20,6 +23,19 @@ class BillboardOrder {
     required this.size,
     required this.status,
   });
+
+  factory BillboardOrder.fromJson(Map<String, dynamic> json) {
+    return BillboardOrder(
+      orderId: json['orderId'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
+      location: json['location'],
+      cost: json['cost'],
+      type: json['type'],
+      size: json['size'],
+      status: json['status'],
+    );
+  }
 }
 
 class BillboardOrderListScreen extends StatefulWidget {
@@ -28,72 +44,64 @@ class BillboardOrderListScreen extends StatefulWidget {
 }
 
 class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
-  final List<BillboardOrder> orders = [
-    BillboardOrder(
-      orderId: '001',
-      startDate: DateTime(2023, 4, 15),
-      endDate: DateTime(2023, 4, 20),
-      location: 'Almaty',
-      cost: 150000.0,
-      type: 'Type 1',
-      size: 'Large',
-      status: 'Pending',
-    ),
-    BillboardOrder(
-      orderId: '002',
-      startDate: DateTime(2023, 4, 17),
-      endDate: DateTime(2023, 4, 22),
-      location: 'Astana',
-      cost: 200000.0,
-      type: 'Type 2',
-      size: 'Medium',
-      status: 'Success',
-    ),
-    BillboardOrder(
-      orderId: '003',
-      startDate: DateTime(2023, 4, 21),
-      endDate: DateTime(2023, 4, 25),
-      location: 'Almaty',
-      cost: 100000.0,
-      type: 'Type 3',
-      size: 'Small',
-      status: 'Canceled',
-    ),
-  ];
+  List<BillboardOrder> orders = [];
+
+  Future<List<BillboardOrder>> load() async {
+    Map<String, String> headers = {"Accept": "application/json"};
+
+    final response = await http.get(
+      Uri.http('10.0.2.2:8005', '/api/orders'),
+      headers: headers,
+    );
+    final l = json.decode(response.body);
+    return List<BillboardOrder>.from(l.map((model) => BillboardOrder.fromJson(model)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Billboard Orders'),
-      ),
-      body: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (BuildContext context, int index) {
-          final order = orders[index];
-          return InkWell(
-            onTap: () {
-              _showOrderDetails(order);
-            },
-            child: Card(
-              child: ListTile(
-                leading: Text('Order ${order.orderId}'),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Start date: ${_formatDate(order.startDate)}'),
-                    Text('End date: ${_formatDate(order.endDate)}'),
-                    Text('Location: ${order.location}'),
-                    Text('Cost: ${order.cost.toString()} KZT'),
-                  ],
-                ),
-                trailing: Text('${order.status}'),
-              ),
+    return FutureBuilder<List<BillboardOrder>>(
+        future: load(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Scaffold(body: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          final orders = snapshot.data!;
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Billboard Orders'),
+            ),
+            body: ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (BuildContext context, int index) {
+                final order = orders[index];
+                return InkWell(
+                  onTap: () {
+                    _showOrderDetails(order);
+                  },
+                  child: Card(
+                    child: ListTile(
+                      leading: Text('Order ${order.orderId}'),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Start date: ${order.startDate}'),
+                          Text('End date: ${(order.endDate)}'),
+                          Text('Location: ${order.location}'),
+                          Text('Cost: ${order.cost.toString()} KZT'),
+                        ],
+                      ),
+                      trailing: Text('${order.status}'),
+                    ),
+                  ),
+                );
+              },
             ),
           );
-        },
-      ),
-    );
+        });
   }
 
   String _formatDate(DateTime date) {
@@ -110,8 +118,8 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Start date: ${_formatDate(order.startDate)}'),
-              Text('End date: ${_formatDate(order.endDate)}'),
+              Text('Start date: ${order.startDate}'),
+              Text('End date: ${order.endDate}'),
               Text('Location: ${order.location}'),
               Text('Cost: ${order.cost.toString()} KZT'),
               Text('Type: ${order.type}'),
