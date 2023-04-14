@@ -54,7 +54,7 @@ class Repository {
       headers: headers,
     );
     print('response : ${response.body}');
-    return true;
+    return response.statusCode == 200;
   }
 
   static Future<List<BillboardOrder>> getOrders() async {
@@ -76,5 +76,21 @@ class Repository {
         jsonValues.map((json) => BillboardOrder.fromJson(json)).toList();
     print(orders.length);
     return orders;
+  }
+
+  static Future<List<String>> getLocations() async {
+    Map<String, String> headers = {"Accept": "application/json"};
+
+    final response = await http.get(
+      Uri.http('10.0.2.2:3005', '/api/locations'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final jsonList = json.decode(response.body) as List<dynamic>;
+      final cities = jsonList.map((json) => json['name'] as String).toList();
+      return cities;
+    } else {
+      return [];
+    }
   }
 }

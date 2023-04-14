@@ -22,6 +22,17 @@ class _MyFormScreenState extends State<MyFormScreen> {
   int _minCost = 20000;
   int _maxCost = 50000;
 
+  List<String> _cities = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Repository.getLocations().then((value) {
+      _cities.clear();
+      _cities.addAll(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,24 +100,19 @@ class _MyFormScreenState extends State<MyFormScreen> {
               children: [
                 Text('Location:   '),
                 DropdownButton(
-                  hint: Text('Select location:'),
-                  value: _location,
-                  onChanged: (value) {
-                    setState(() {
-                      _location = value.toString();
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: 'Almaty',
-                      child: Text('Almaty'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Astana',
-                      child: Text('Astana'),
-                    ),
-                  ],
-                ),
+                    hint: Text('Select location:'),
+                    value: _location,
+                    onChanged: (value) {
+                      setState(() {
+                        _location = value.toString();
+                      });
+                    },
+                    items: _cities
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e),
+                            ))
+                        .toList()),
                 Spacer(),
                 Text('Material:   '),
                 DropdownButton(
