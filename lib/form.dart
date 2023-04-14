@@ -18,9 +18,9 @@ class _MyFormScreenState extends State<MyFormScreen> {
   String _location = 'Almaty';
   String _material = 'digital';
   DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
-  int _minCost = 0;
-  int _maxCost = 100;
+  DateTime _endDate = DateTime.now().add(Duration(days: 5));
+  int _minCost = 20000;
+  int _maxCost = 50000;
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +200,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
               children: [
                 Expanded(
                   child: TextFormField(
+                    initialValue: _minCost.toString(),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Min cost',
@@ -213,6 +214,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
                 SizedBox(width: 16.0),
                 Expanded(
                   child: TextFormField(
+                    initialValue: _maxCost.toString(),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Max cost',
@@ -251,9 +253,13 @@ class _MyFormScreenState extends State<MyFormScreen> {
       'material': 'digital',
       'min_cost': _minCost.toString(),
       'max_cost': _maxCost.toString(),
+      'days': _endDate.difference(_startDate).inDays.toString(),
     };
 
     final ok = await Repository.makeOrder(data);
     print(ok);
+    if (ok) {
+      Navigator.of(context).pop();
+    }
   }
 }

@@ -188,14 +188,6 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
               Text('Size: ${order.size}'),
             ],
           ),
-          // actions: [
-          //   TextButton(
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //     },
-          //     child: Text('Close'),
-          //   ),
-          // ],
         );
       },
     );
