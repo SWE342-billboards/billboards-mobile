@@ -30,6 +30,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
     Repository.getLocations().then((value) {
       _cities.clear();
       _cities.addAll(value);
+      setState(() {});
     });
   }
 
@@ -37,7 +38,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Form Screen'),
+        title: Text('Order to Rent Billboard'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

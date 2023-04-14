@@ -1,7 +1,5 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'form.dart';
@@ -88,7 +86,7 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return MyFormScreen();
-          }));
+          })).then((value) => setState(() {}));
         },
       ),
       body: FutureBuilder(
