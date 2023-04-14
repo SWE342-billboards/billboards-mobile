@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import 'form.dart';
+import 'repository.dart';
+
 class BillboardOrder {
   final int orderId;
   final DateTime startDate;
@@ -62,111 +65,103 @@ class BillboardOrderListScreen extends StatefulWidget {
 }
 
 class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
-  List<BillboardOrder> orders = [];
-
-  Future<List<BillboardOrder>> _loadOrders() async {
-    Map<String, String> headers = {"Accept": "application/json"};
-
-    final response = await http.post(
-      Uri.http('10.0.2.2:3005', '/api/orders'),
-      headers: headers,
-      body: {'user_id': '1'},
-    );
-
-    // Decode JSON list to list of dynamic values
-    final List<dynamic> jsonValues = json.decode(response.body);
-
-    // Map dynamic values to BillboardOrder objects
-    final List<BillboardOrder> orders =
-        jsonValues.map((json) => BillboardOrder.fromJson(json)).toList();
-
-    return orders;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _loadOrders(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        }
-        final orders = snapshot.data!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Billboard Orders'),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: InkWell(
+              child: Icon(Icons.logout),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.create),
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return MyFormScreen();
+          }));
+        },
+      ),
+      body: FutureBuilder(
+        future: Repository.getOrders(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          final orders = snapshot.data!;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Billboard Orders'),
-          ),
-          body: FutureBuilder<List<BillboardOrder>>(
-            future: _loadOrders(),
-            builder: ((context, snapshot) {
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
+          if (orders.length == 0) {
+            return Center(child: Text('No orders'));
+          }
 
-              final data = snapshot.data;
-
-              return ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  final order = orders[index];
-                  return InkWell(
-                    onTap: () {
-                      _showOrderDetails(order);
-                    },
-                    child: Card(
-                      elevation: 5,
-                      child: ListTile(
-                        title: Text('Order #${order.orderId}'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${DateFormat.yMMMd().format(order.startDate)} - ${DateFormat.yMMMd().format(order.endDate)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              'Cost: \$${order.cost}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Text(
-                              'Location: ${order.city}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        trailing: Text(
-                          '${order.status}',
+          return ListView.builder(
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index];
+              return InkWell(
+                onTap: () {
+                  _showOrderDetails(order);
+                },
+                child: Card(
+                  elevation: 5,
+                  child: ListTile(
+                    title: Text('Order #${order.orderId}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${DateFormat.yMMMd().format(order.startDate)} - ${DateFormat.yMMMd().format(order.endDate)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                            fontSize: 18,
+                            color: Colors.black,
+                            fontSize: 16,
                           ),
                         ),
+                        Text(
+                          'Cost: \$${order.cost}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          'Location: ${order.city}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Text(
+                      '${order.status}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                        fontSize: 18,
                       ),
                     ),
-                  );
-                },
+                  ),
+                ),
               );
-            }),
-          ),
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 

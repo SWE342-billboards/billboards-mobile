@@ -1,3 +1,4 @@
+import 'package:demo/orders.dart';
 import 'package:flutter/material.dart';
 
 import 'repository.dart';
@@ -61,6 +62,11 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                 final password = _passwordController.text;
                 final ok = await Repository.login(email, password);
                 print(ok);
+                if (ok) {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return BillboardOrderListScreen();
+                  }));
+                }
               },
               child: Text('Login'),
             ),

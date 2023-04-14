@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import 'orders.dart';
+import 'repository.dart';
 
 class MyFormScreen extends StatefulWidget {
   @override
@@ -210,7 +211,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
   }
 
   Future<void> _submitForm() async {
-    var order = {
+    var data = {
       'start_date': '2023-05-01',
       'end_date': '2023-05-31',
       'user_id': 1.toString(),
@@ -222,16 +223,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
       'max_cost': _maxCost.toString(),
     };
 
-    Map<String, String> headers = {"Accept": "application/json"};
-
-    // Make the HTTP request
-    final response = await http.post(
-      Uri.http('10.0.2.2:3005', '/api/make_order'),
-      body: order,
-      headers: headers,
-    );
-
-    print('response : ${response.body}');
-    Navigator.push(context, MaterialPageRoute(builder: (c) => BillboardOrderListScreen()));
+    final ok = Repository.makeOrder(data);
+    print(ok);
   }
 }
