@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'auth.dart';
 import 'form.dart';
 import 'orders.dart';
 
@@ -27,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MyFormScreen(),
+      body: Auth(),
     );
   }
 }
