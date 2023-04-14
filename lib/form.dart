@@ -12,13 +12,13 @@ class MyFormScreen extends StatefulWidget {
 }
 
 class _MyFormScreenState extends State<MyFormScreen> {
-  String _size = 'Small';
-  String _type = '1-side';
+  String _size = 'small';
+  String _type = '1-sided';
   String _location = 'Almaty';
   DateTime? _startDate;
   DateTime? _endDate;
-  double _minCost = 0.0;
-  double _maxCost = 100.0;
+  int _minCost = 0;
+  int _maxCost = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +41,16 @@ class _MyFormScreenState extends State<MyFormScreen> {
               },
               items: [
                 DropdownMenuItem(
-                  value: 'Small',
-                  child: Text('Small'),
+                  value: 'small',
+                  child: Text('small'),
                 ),
                 DropdownMenuItem(
-                  value: 'Medium',
-                  child: Text('Medium'),
+                  value: 'medium',
+                  child: Text('medium'),
                 ),
                 DropdownMenuItem(
-                  value: 'Large',
-                  child: Text('Large'),
+                  value: 'large',
+                  child: Text('large'),
                 ),
               ],
             ),
@@ -65,15 +65,15 @@ class _MyFormScreenState extends State<MyFormScreen> {
               },
               items: [
                 DropdownMenuItem(
-                  value: '1-side',
+                  value: '1-sided',
                   child: Text('1-side'),
                 ),
                 DropdownMenuItem(
-                  value: '2-side',
+                  value: '2-sided',
                   child: Text('2-side'),
                 ),
                 DropdownMenuItem(
-                  value: '3-side',
+                  value: '3-sided',
                   child: Text('3-side'),
                 ),
               ],
@@ -175,7 +175,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
                       suffixText: 'KZT',
                     ),
                     onChanged: (value) {
-                      _minCost = double.parse(value);
+                      _minCost = int.parse(value);
                     },
                   ),
                 ),
@@ -188,7 +188,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
                       suffixText: 'KZT',
                     ),
                     onChanged: (value) {
-                      _maxCost = double.parse(value);
+                      _maxCost = int.parse(value);
                     },
                   ),
                 ),
@@ -210,23 +210,24 @@ class _MyFormScreenState extends State<MyFormScreen> {
   }
 
   Future<void> _submitForm() async {
-    // Create a map of the form data to send as the request body
-    final formData = {
+    var order = {
+      'start_date': '2023-05-01',
+      'end_date': '2023-05-31',
+      'user_id': 1.toString(),
+      'location': _location,
       'size': _size,
       'type': _type,
-      'location': _location,
-      'startDate': _startDate?.toIso8601String(),
-      'endDate': _endDate?.toIso8601String(),
-      'minCost': _minCost.toString(),
-      'maxCost': _maxCost.toString(),
+      'material': 'digital',
+      'min_cost': _minCost.toString(),
+      'max_cost': _maxCost.toString(),
     };
 
     Map<String, String> headers = {"Accept": "application/json"};
 
     // Make the HTTP request
     final response = await http.post(
-      Uri.http('10.0.2.2:8005', '/api/order'),
-      body: formData,
+      Uri.http('10.0.2.2:3005', '/api/make_order'),
+      body: order,
       headers: headers,
     );
 
