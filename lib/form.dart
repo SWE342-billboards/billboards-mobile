@@ -16,6 +16,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
   String _size = 'small';
   String _type = '1-sided';
   String _location = 'Almaty';
+  String _material = 'digital';
   DateTime? _startDate;
   DateTime? _endDate;
   int _minCost = 0;
@@ -32,74 +33,103 @@ class _MyFormScreenState extends State<MyFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Select size:'),
-            DropdownButton(
-              value: _size,
-              onChanged: (value) {
-                setState(() {
-                  _size = value.toString();
-                });
-              },
-              items: [
-                DropdownMenuItem(
-                  value: 'small',
-                  child: Text('small'),
+            Row(
+              children: [
+                Text('Size:   '),
+                DropdownButton(
+                  value: _size,
+                  onChanged: (value) {
+                    setState(() {
+                      _size = value.toString();
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      value: 'small',
+                      child: Text('small'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'medium',
+                      child: Text('medium'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'large',
+                      child: Text('large'),
+                    ),
+                  ],
                 ),
-                DropdownMenuItem(
-                  value: 'medium',
-                  child: Text('medium'),
-                ),
-                DropdownMenuItem(
-                  value: 'large',
-                  child: Text('large'),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Text('Select type:'),
-            DropdownButton(
-              value: _type,
-              onChanged: (value) {
-                setState(() {
-                  _type = value.toString();
-                });
-              },
-              items: [
-                DropdownMenuItem(
-                  value: '1-sided',
-                  child: Text('1-side'),
-                ),
-                DropdownMenuItem(
-                  value: '2-sided',
-                  child: Text('2-side'),
-                ),
-                DropdownMenuItem(
-                  value: '3-sided',
-                  child: Text('3-side'),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Text('Select location:'),
-            DropdownButton(
-              value: _location,
-              onChanged: (value) {
-                setState(() {
-                  _location = value.toString();
-                });
-              },
-              items: [
-                DropdownMenuItem(
-                  value: 'Almaty',
-                  child: Text('Almaty'),
-                ),
-                DropdownMenuItem(
-                  value: 'Astana',
-                  child: Text('Astana'),
+                Spacer(),
+                Text('Type:   '),
+                DropdownButton(
+                  value: _type,
+                  onChanged: (value) {
+                    setState(() {
+                      _type = value.toString();
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      value: '1-sided',
+                      child: Text('1-side'),
+                    ),
+                    DropdownMenuItem(
+                      value: '2-sided',
+                      child: Text('2-side'),
+                    ),
+                    DropdownMenuItem(
+                      value: '3-sided',
+                      child: Text('3-side'),
+                    ),
+                  ],
                 ),
               ],
             ),
             SizedBox(height: 16.0),
+            Row(
+              children: [
+                Text('Location:   '),
+                DropdownButton(
+                  hint: Text('Select location:'),
+                  value: _location,
+                  onChanged: (value) {
+                    setState(() {
+                      _location = value.toString();
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      value: 'Almaty',
+                      child: Text('Almaty'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Astana',
+                      child: Text('Astana'),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Text('Material:   '),
+                DropdownButton(
+                  value: _material,
+                  onChanged: (value) {
+                    setState(() {
+                      _material = value.toString();
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      value: 'digital',
+                      child: Text('digital'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'painted',
+                      child: Text('painted'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 30),
             Text('Select date range:'),
             Row(
               children: [
