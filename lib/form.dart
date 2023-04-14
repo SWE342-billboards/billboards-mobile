@@ -17,8 +17,8 @@ class _MyFormScreenState extends State<MyFormScreen> {
   String _type = '1-sided';
   String _location = 'Almaty';
   String _material = 'digital';
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
   int _minCost = 0;
   int _maxCost = 100;
 
@@ -242,9 +242,9 @@ class _MyFormScreenState extends State<MyFormScreen> {
 
   Future<void> _submitForm() async {
     var data = {
-      'start_date': '2023-05-01',
-      'end_date': '2023-05-31',
-      'user_id': 1.toString(),
+      'start_date': DateFormat('yyyy-MM-dd').format(_startDate),
+      'end_date': DateFormat('yyyy-MM-dd').format(_endDate),
+      'user_id': Repository.userId.toString(),
       'location': _location,
       'size': _size,
       'type': _type,
@@ -253,7 +253,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
       'max_cost': _maxCost.toString(),
     };
 
-    final ok = Repository.makeOrder(data);
+    final ok = await Repository.makeOrder(data);
     print(ok);
   }
 }

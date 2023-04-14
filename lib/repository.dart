@@ -43,11 +43,14 @@ class Repository {
   }
 
   static Future<bool> makeOrder(Map<String, dynamic> data) async {
-    Map<String, String> headers = {"Accept": "application/json"};
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      'Content-Type': 'application/json'
+    };
 
     final response = await http.post(
       Uri.http('10.0.2.2:3005', '/api/make_order'),
-      body: data,
+      body: json.encode(data),
       headers: headers,
     );
     print('response : ${response.body}');
