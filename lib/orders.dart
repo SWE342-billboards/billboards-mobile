@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class BillboardOrder {
   final int orderId;
@@ -110,25 +111,53 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
 
               return ListView.builder(
                 itemCount: orders.length,
-                itemBuilder: (BuildContext context, int index) {
+                itemBuilder: (context, index) {
                   final order = orders[index];
                   return InkWell(
                     onTap: () {
                       _showOrderDetails(order);
                     },
                     child: Card(
+                      elevation: 5,
                       child: ListTile(
-                        leading: Text('Order ${order.orderId}'),
-                        title: Column(
+                        title: Text('Order #${order.orderId}'),
+                        subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Start date: ${order.startDate}'),
-                            Text('End date: ${(order.endDate)}'),
-                            Text('Location: ${order.city}'),
-                            Text('Cost: ${order.cost.toString()} KZT'),
+                            Text(
+                              '${DateFormat.yMMMd().format(order.startDate)} - ${DateFormat.yMMMd().format(order.endDate)}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              'Cost: \$${order.cost}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              'Location: ${order.city}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
-                        trailing: Text('${order.status}'),
+                        trailing: Text(
+                          '${order.status}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -150,28 +179,28 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Order ${order.orderId}'),
+          title: Text('Order ${order.orderId} - Status: ${order.status}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Start date: ${order.startDate}'),
-              Text('End date: ${order.endDate}'),
+              Text('Start date: ${DateFormat.yMMMd().format(order.startDate)}'),
+              Text('End date: ${DateFormat.yMMMd().format(order.endDate)}'),
+              Text('Cost: \$${order.cost}'),
               Text('Location: ${order.city}'),
-              Text('Cost: ${order.cost.toString()} KZT'),
               Text('Type: ${order.type}'),
+              Text('Material: ${order.material}'),
               Text('Size: ${order.size}'),
-              Text('Status: ${order.status}'),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Close'),
-            ),
-          ],
+          // actions: [
+          //   TextButton(
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //     child: Text('Close'),
+          //   ),
+          // ],
         );
       },
     );
