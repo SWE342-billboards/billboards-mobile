@@ -67,7 +67,7 @@ class InitialScreen extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => LoginPageWidget()));
+                        .push(MaterialPageRoute(builder: (context) => LoginScreen()));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 14),
