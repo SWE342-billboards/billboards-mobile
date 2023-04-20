@@ -1,117 +1,189 @@
 import 'dart:convert';
+import 'package:demo/login.dart';
 import 'package:demo/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:email_validator/email_validator.dart';
 
-class RegistrationPageWidget extends StatefulWidget {
+class RegistrationScreen extends StatefulWidget {
+  final bool isUpdateProfile;
+  const RegistrationScreen({
+    super.key,
+    this.isUpdateProfile = false,
+  });
+
   @override
-  _RegistrationPageWidgetState createState() => _RegistrationPageWidgetState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isCustomer = true;
   bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  bool _passwordVisible = false;
+  final _formKey = GlobalKey<FormState>();
+  bool _isValid = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Registration'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Email',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              'Password',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'Enter your password',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              'Register as:',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            Row(
-              children: [
-                Radio(
-                  value: true,
-                  groupValue: _isCustomer,
-                  onChanged: (value) {
-                    setState(() {
-                      _isCustomer = value as bool;
-                    });
-                  },
-                ),
-                Text('Customer'),
-                SizedBox(width: 16.0),
-                Radio(
-                  value: false,
-                  groupValue: _isCustomer,
-                  onChanged: (value) {
-                    setState(() {
-                      _isCustomer = value as bool;
-                    });
-                  },
-                ),
-                Text('Manager'),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      _registerUser();
-                    },
-                    child: Text('Submit'),
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 36,
                   ),
-          ],
+                  TextFormField(
+                    controller: _emailController,
+                    onChanged: (value) {
+                      _isValid =
+                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Email',
+                      hintStyle: const TextStyle(fontSize: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please enter your email';
+                      } else if (!EmailValidator.validate(value ?? '')) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: !_passwordVisible,
+                    onChanged: (value) {
+                      _isValid =
+                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      setState(() {});
+                    },
+                    validator: (value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Password',
+                        hintStyle: const TextStyle(fontSize: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        )),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'User type:',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: true,
+                        groupValue: _isCustomer,
+                        onChanged: (value) {
+                          setState(() {
+                            _isCustomer = value as bool;
+                          });
+                        },
+                      ),
+                      Text('Customer'),
+                      SizedBox(width: 16.0),
+                      Radio(
+                        value: false,
+                        groupValue: _isCustomer,
+                        onChanged: (value) {
+                          setState(() {
+                            _isCustomer = value as bool;
+                          });
+                        },
+                      ),
+                      Text('Manager'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('You have an account?'),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => LoginPageWidget()));
+                        },
+                        child: const Text('Log in'),
+                      ),
+                    ],
+                  ),
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : InkWell(
+                          onTap: _register,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: _isValid ? null : Border.all(color: const Color(0xFF1976D2)),
+                              color: _isValid ? const Color(0xFF1976D2) : null,
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Register',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: _isValid ? Colors.white : Color(0xFF1976D2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Future<void> _registerUser() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    final userType = _isCustomer ? 'customer' : 'manager';
+  Future _register() async {
+    if (_formKey.currentState?.validate() == true) {
+      final email = _emailController.text;
+      final password = _passwordController.text;
+      final userType = _isCustomer ? 'customer' : 'manager';
 
-    final ok = await Repository.register(email, password, userType);
-    print(ok);
+      // final ok = await Repository.register(email, password, userType);
+      // print(ok);
+    }
 
     setState(() {
       _isLoading = false;
