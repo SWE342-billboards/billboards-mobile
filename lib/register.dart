@@ -26,6 +26,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _passwordVisible = false;
   final _formKey = GlobalKey<FormState>();
   bool _isValid = false;
+  String? _errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +51,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   TextFormField(
                     controller: _emailController,
                     onChanged: (value) {
-                      _isValid =
-                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      _isValid = _emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          EmailValidator.validate(_emailController.text);
                       setState(() {});
                     },
                     decoration: InputDecoration(
@@ -143,6 +145,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ],
                   ),
+                  if (_errorText != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        _errorText!,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                   _isLoading
                       ? CircularProgressIndicator()
                       : InkWell(
@@ -181,8 +191,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       final password = _passwordController.text;
       final userType = _isCustomer ? 'customer' : 'manager';
 
-      // final ok = await Repository.register(email, password, userType);
-      // print(ok);
+      final ok = await Repository.register(email, password, userType);
+      print(ok);
+
+      if (ok) {
+        Navigator.pop(context);
+      } else {
+        _errorText = 'Email is already in use!';
+      }
     }
 
     setState(() {

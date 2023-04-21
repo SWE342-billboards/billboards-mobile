@@ -20,6 +20,9 @@ class Repository {
     ).catchError(() {
       return false;
     });
+    if (response.statusCode != 200) {
+      return false;
+    }
 
     userId = jsonDecode(response.body)['id'];
     return true;

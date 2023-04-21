@@ -82,8 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _passwordController,
                     obscureText: !_passwordVisible,
                     onChanged: (value) {
-                      _isValid =
-                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      _isValid = _emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          EmailValidator.validate(_emailController.text);
                       setState(() {});
                     },
                     validator: (value) {
@@ -112,8 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text('Not Registered Yet?'),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(builder: (context) => RegistrationScreen()));
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => RegistrationScreen()));
                         },
                         child: const Text('Register'),
                       ),
