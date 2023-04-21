@@ -73,7 +73,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Only numerals, letters and: !, @, #, \$, %, ^, &, ',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_passwordVisible,

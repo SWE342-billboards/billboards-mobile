@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockRepository extends Repository {
-  @override
-  Future<bool> login(String email, String password) async {
-    return Future.value(true);
-  }
-}
+// class MockRepository extends Repository {
+//   @override
+//   Future<bool> login(String email, String password) async {
+//     return Future.value(true);
+//   }
+// }
 
 void main() {
   group('Initial screen', () {
