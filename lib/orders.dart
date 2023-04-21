@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'auth.dart';
 import 'form.dart';
 import 'repository.dart';
 
@@ -75,7 +75,8 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
             child: InkWell(
               child: Icon(Icons.logout),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushReplacement(MaterialPageRoute(builder: (c) => InitialScreen()));
               },
             ),
           )

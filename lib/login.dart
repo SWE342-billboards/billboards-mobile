@@ -4,13 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'repository.dart';
 
-import 'dart:convert';
-import 'package:demo/login.dart';
-import 'package:demo/repository.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:email_validator/email_validator.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -56,8 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: _emailController,
                     onChanged: (value) {
-                      _isValid =
-                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      _isValid = _emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          EmailValidator.validate(_emailController.text);
                       setState(() {});
                     },
                     decoration: InputDecoration(
@@ -141,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                'Login',
+                                'Log in',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,

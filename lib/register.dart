@@ -78,8 +78,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     controller: _passwordController,
                     obscureText: !_passwordVisible,
                     onChanged: (value) {
-                      _isValid =
-                          _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+                      _isValid = _emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          EmailValidator.validate(_emailController.text);
                       setState(() {});
                     },
                     validator: (value) {
@@ -166,7 +167,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                'Register',
+                                'Submit',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
