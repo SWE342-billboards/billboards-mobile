@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'auth.dart';
 import 'form.dart';
 import 'repository.dart';
 
@@ -59,10 +61,24 @@ class BillboardOrder {
 
 class BillboardOrderListScreen extends StatefulWidget {
   @override
-  _BillboardOrderListScreenState createState() => _BillboardOrderListScreenState();
+  _BillboardOrderListScreenState createState() =>
+      _BillboardOrderListScreenState();
 }
 
 class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
+  @override
+  var uid;
+  initState() {
+    doSomeAsyncStuff();
+    super.initState();
+  }
+
+  Future<void> doSomeAsyncStuff() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    uid = prefs.getString('uid');
+    print(uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,9 +90,14 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: InkWell(
               child: Icon(Icons.logout),
-              onTap: () {
+              onTap: () async {
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                prefs.setString('uid', '');
                 Navigator.of(context)
-                    .pushReplacement(MaterialPageRoute(builder: (c) => InitialScreen()));
+                    .push(MaterialPageRoute(builder: (context) {
+                  return MyHomePage(uid: prefs.getString('uid').toString());
+                }));
               },
             ),
           )
@@ -90,8 +111,8 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
           })).then((value) => setState(() {}));
         },
       ),
-      body: FutureBuilder(
-        future: Repository.getOrders(),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('orders').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
@@ -99,64 +120,70 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
-          final orders = snapshot.data!;
+          var orders = snapshot.data!;
 
-          if (orders.length == 0) {
+          if (orders.docs.length == 0) {
             return Center(child: Text('No orders'));
           }
 
           return ListView.builder(
-            itemCount: orders.length,
+            itemCount: orders.docs.length,
             itemBuilder: (context, index) {
-              final order = orders[index];
-              return InkWell(
-                onTap: () {
-                  _showOrderDetails(order);
-                },
-                child: Card(
-                  elevation: 5,
-                  child: ListTile(
-                    title: Text('Order #${order.orderId}'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${DateFormat.yMMMd().format(order.startDate)} - ${DateFormat.yMMMd().format(order.endDate)}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 16,
+              final order = orders.docs[index];
+              print(order['orderId']);
+
+              if (order['user_id'] == uid) {
+                return InkWell(
+                  onTap: () {
+                    _showOrderDetails(order);
+                  },
+                  child: Card(
+                    elevation: 5,
+                    child: ListTile(
+                      title: Text('Order #${order['orderId']}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            order['start_date'] + ' - ' + order['end_date'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Cost: \$${order.cost}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 15,
+                          Text(
+                            'Cost: \$${order['min_cost']}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Location: ${order.city}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
+                          Text(
+                            'Location: ${order['location']}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
                           ),
+                        ],
+                      ),
+                      trailing: Text(
+                        '${order['status']}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                          fontSize: 18,
                         ),
-                      ],
-                    ),
-                    trailing: Text(
-                      '${order.status}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                        fontSize: 18,
                       ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
+
+              return Container();
             },
           );
         },
@@ -168,23 +195,24 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
     return '${date.day}.${date.month}.${date.year}';
   }
 
-  void _showOrderDetails(BillboardOrder order) {
+  void _showOrderDetails(orders) {
+    var order = orders.data() as Map;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Order ${order.orderId} - Status: ${order.status}'),
+          title: Text('Order ${order['orderId']} - Status: ${order['status']}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Start date: ${DateFormat.yMMMd().format(order.startDate)}'),
-              Text('End date: ${DateFormat.yMMMd().format(order.endDate)}'),
-              Text('Cost: \$${order.cost}'),
-              Text('Location: ${order.city}'),
-              Text('Type: ${order.type}'),
-              Text('Material: ${order.material}'),
-              Text('Size: ${order.size}'),
+              Text('Start date:' + order['start_date']),
+              Text('End date: ' + order['end_date']),
+              Text('Cost: \$${order['min_cost']}'),
+              Text('Location: ${order['location']}'),
+              Text('Type: ${order['type']}'),
+              Text('Material: ${order['material']}'),
+              Text('Size: ${order['size']}'),
             ],
           ),
         );

@@ -20,9 +20,6 @@ class Repository {
     ).catchError(() {
       return false;
     });
-    if (response.statusCode != 200) {
-      return false;
-    }
 
     userId = jsonDecode(response.body)['id'];
     return true;
@@ -41,49 +38,37 @@ class Repository {
       return false;
     });
 
-    if (response.statusCode != 200) {
-      return false;
-    }
-
     userId = jsonDecode(response.body)['id'];
     return true;
   }
 
-  static Future<bool> makeOrder(Map<String, dynamic> data) async {
-    Map<String, String> headers = {
-      "Accept": "application/json",
-      'Content-Type': 'application/json'
-    };
+  // static Future<bool> makeOrder(Map<String, dynamic> data) async {
+  //   // Map<String, String> headers = {
+  //   //   "Accept": "application/json",
+  //   //   'Content-Type': 'application/json'
+  //   // };
 
-    final response = await http.post(
-      Uri.http('10.0.2.2:3005', '/api/make_order'),
-      body: json.encode(data),
-      headers: headers,
-    );
-    print('response : ${response.body}');
-    return response.statusCode == 200;
-  }
+  //   // final response = await http.post(
+  //   //   Uri.http('10.0.2.2:3005', '/api/make_order'),
+  //   //   body: json.encode(data),
+  //   //   headers: headers,
+  //   // );
+  //   // print('response : ${response.body}');
+  //   // return response.statusCode == 200;
+  // }
 
-  static Future<List<BillboardOrder>> getOrders() async {
-    Map<String, String> headers = {"Accept": "application/json"};
+  // static Future<List<BillboardOrder>> getOrders() async {
+  //   Map<String, String> headers = {"Accept": "application/json"};
 
-    final response = await http.post(
-      Uri.http('10.0.2.2:3005', '/api/orders'),
-      headers: headers,
-      body: {
-        'user_id': userId.toString(),
-      },
-    );
+  //   // // Decode JSON list to list of dynamic values
+  //   // final List<dynamic> jsonValues = json.decode(response.body);
 
-    // Decode JSON list to list of dynamic values
-    final List<dynamic> jsonValues = json.decode(response.body);
-
-    // Map dynamic values to BillboardOrder objects
-    final List<BillboardOrder> orders =
-        jsonValues.map((json) => BillboardOrder.fromJson(json)).toList();
-    print(orders.length);
-    return orders;
-  }
+  //   // Map dynamic values to BillboardOrder objects
+  //   // final List<BillboardOrder> orders =
+  //   //     jsonValues.map((json) => BillboardOrder.fromJson(json)).toList();
+  //   // print(orders.length);
+  //   // return orders;
+  // }
 
   static Future<List<String>> getLocations() async {
     Map<String, String> headers = {"Accept": "application/json"};

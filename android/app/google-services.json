@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "359957814108",
+    "project_id": "nuko-1411b",
+    "storage_bucket": "nuko-1411b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359957814108:android:cf34e2d81785ed9f8dff99",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "359957814108-qq5mjp44uuikp66kqd0lrmfe1h19cdal.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.demo",
+            "certificate_hash": "bc57ce114560f411a7f4df015a4194f332c6ef2d"
+          }
+        },
+        {
+          "client_id": "359957814108-3ggookmjsl0hhhtlvkacnebffo5e11jh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC75vg2hJv6ilabwwMiudcpqvatEjdFP1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359957814108-3ggookmjsl0hhhtlvkacnebffo5e11jh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
