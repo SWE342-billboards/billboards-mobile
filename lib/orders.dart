@@ -61,16 +61,15 @@ class BillboardOrder {
 
 class BillboardOrderListScreen extends StatefulWidget {
   @override
-  _BillboardOrderListScreenState createState() =>
-      _BillboardOrderListScreenState();
+  _BillboardOrderListScreenState createState() => _BillboardOrderListScreenState();
 }
 
 class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
-  @override
   var uid;
-  initState() {
-    doSomeAsyncStuff();
+  @override
+  void initState() {
     super.initState();
+    doSomeAsyncStuff();
   }
 
   Future<void> doSomeAsyncStuff() async {
@@ -91,11 +90,9 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
             child: InkWell(
               child: Icon(Icons.logout),
               onTap: () async {
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('uid', '');
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                   return MyHomePage(uid: prefs.getString('uid').toString());
                 }));
               },
@@ -124,7 +121,7 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
 
           if (orders.docs.length == 0) {
             return Center(child: Text('No orders'));
-          }
+          } 
 
           return ListView.builder(
             itemCount: orders.docs.length,

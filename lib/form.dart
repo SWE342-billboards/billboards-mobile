@@ -15,25 +15,29 @@ class MyFormScreen extends StatefulWidget {
 }
 
 class _MyFormScreenState extends State<MyFormScreen> {
-  String _size = 'small';
+  String _size = 'Small';
   String _type = '1-sided';
   String _location = 'Almaty';
   String _material = 'digital';
+
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _minCostController = TextEditingController();
+  TextEditingController _maxCostController = TextEditingController();
+  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _endDateController = TextEditingController();
+
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(Duration(days: 5));
-  int _minCost = 20000;
-  int _maxCost = 50000;
 
-  List<String> _cities = [];
+  List<String> _cities = [
+    'Almaty',
+    'Nursultan',
+    'Semei',
+  ];
 
   @override
   void initState() {
     super.initState();
-    // Repository.getLocations().then((value) {
-    //   _cities.clear();
-    //   _cities.addAll(value);
-    //   setState(() {});
-    // });
   }
 
   @override
@@ -44,212 +48,238 @@ class _MyFormScreenState extends State<MyFormScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('Size:   '),
-                DropdownButton(
-                  value: _size,
-                  onChanged: (value) {
-                    setState(() {
-                      _size = value.toString();
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: 'small',
-                      child: Text('small'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'medium',
-                      child: Text('medium'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'large',
-                      child: Text('large'),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Text('Type:   '),
-                DropdownButton(
-                  value: _type,
-                  onChanged: (value) {
-                    setState(() {
-                      _type = value.toString();
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: '1-sided',
-                      child: Text('1-side'),
-                    ),
-                    DropdownMenuItem(
-                      value: '2-sided',
-                      child: Text('2-side'),
-                    ),
-                    DropdownMenuItem(
-                      value: '3-sided',
-                      child: Text('3-side'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Row(
-              children: [
-                Text('Location:   '),
-                DropdownButton(
-                    hint: Text('Select location:'),
-                    value: _location,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('Size:   '),
+                  DropdownButton(
+                    value: _size,
                     onChanged: (value) {
                       setState(() {
-                        _location = value.toString();
+                        _size = value.toString();
                       });
                     },
-                    items: _cities
-                        .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            ))
-                        .toList()),
-                Spacer(),
-                Text('Material:   '),
-                DropdownButton(
-                  value: _material,
-                  onChanged: (value) {
-                    setState(() {
-                      _material = value.toString();
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: 'digital',
-                      child: Text('digital'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'painted',
-                      child: Text('painted'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Text('Select date range:'),
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _startDate ?? DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null && picked != _startDate) {
-                        setState(() {
-                          _startDate = picked;
-                        });
-                      }
-                    },
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Start date',
-                          suffixIcon: Icon(Icons.calendar_today),
-                        ),
-                        readOnly: true,
-                        controller: TextEditingController(
-                          text: _startDate == null
-                              ? ''
-                              : DateFormat.yMd().format(_startDate!),
-                        ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Small',
+                        child: Text('Small'),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _endDate ?? DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null && picked != _endDate) {
-                        setState(() {
-                          _endDate = picked;
-                        });
-                      }
-                    },
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'End date',
-                          suffixIcon: Icon(Icons.calendar_today),
-                        ),
-                        readOnly: true,
-                        controller: TextEditingController(
-                          text: _endDate == null
-                              ? ''
-                              : DateFormat.yMd().format(_endDate!),
-                        ),
+                      DropdownMenuItem(
+                        value: 'Medium',
+                        child: Text('Medium'),
                       ),
-                    ),
+                      DropdownMenuItem(
+                        value: 'Large',
+                        child: Text('Large'),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Text('Select cost range:'),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _minCost.toString(),
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Min cost',
-                      suffixText: 'KZT',
-                    ),
+                  Spacer(),
+                  Text('Type:   '),
+                  DropdownButton(
+                    value: _type,
                     onChanged: (value) {
-                      _minCost = int.parse(value);
+                      setState(() {
+                        _type = value.toString();
+                      });
                     },
+                    items: [
+                      DropdownMenuItem(
+                        value: '1-sided',
+                        child: Text('1-side'),
+                      ),
+                      DropdownMenuItem(
+                        value: '2-sided',
+                        child: Text('2-side'),
+                      ),
+                      DropdownMenuItem(
+                        value: '3-sided',
+                        child: Text('3-side'),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _maxCost.toString(),
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Max cost',
-                      suffixText: 'KZT',
-                    ),
-                    onChanged: (value) {
-                      _maxCost = int.parse(value);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: ElevatedButton(
-                child: Text('Submit'),
-                onPressed: _submitForm,
+                ],
               ),
-            ),
-          ],
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Location:   '),
+                  DropdownButton(
+                      hint: Text('Select location:'),
+                      value: _location,
+                      onChanged: (value) {
+                        setState(() {
+                          _location = value.toString();
+                        });
+                      },
+                      items: _cities
+                          .map((e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(e),
+                              ))
+                          .toList()),
+                  Spacer(),
+                  Text('Material:   '),
+                  DropdownButton(
+                    value: _material,
+                    onChanged: (value) {
+                      setState(() {
+                        _material = value.toString();
+                      });
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: 'digital',
+                        child: Text('digital'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'painted',
+                        child: Text('painted'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 30),
+              Text('Select date range:'),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _startDate ?? DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null && picked != _startDate) {
+                          setState(() {
+                            _startDate = picked;
+                            _startDateController.text = DateFormat.yMd().format(picked);
+                          });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          controller: _startDateController,
+                          keyboardType: TextInputType.datetime,
+                          validator: (value) {
+                            if (value?.isEmpty == true) {
+                              return 'Please enter start date';
+                            }
+                            // if (DateTime.parse(value ?? '0')
+                            //     .isAfter(DateTime.parse(_endDateController.text))) {
+                            //   return 'Start date should be less than end date';
+                            // }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Start Date',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 40),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _endDate ?? DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null && picked != _endDate) {
+                          setState(() {
+                            _endDate = picked;
+                            _endDateController.text = DateFormat.yMd().format(picked);
+                          });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          controller: _endDateController,
+                          keyboardType: TextInputType.datetime,
+                          validator: (value) {
+                            if (value?.isEmpty == true) {
+                              return 'Please enter end date';
+                            }
+                            if (_endDate.isBefore(_startDate)) {
+                              return 'End date should be greater than start date';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'End Date',
+                            errorMaxLines: 3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Text('Select cost range:'),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _minCostController,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value?.isEmpty == true) {
+                          return 'Please enter minimum cost';
+                        }
+                        // if (double.parse(value ?? '0') >= double.parse(_maxCostController.text)) {
+                        //   return 'Minimum cost should be less than maximum cost';
+                        // }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Minimum Cost',
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 40),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _maxCostController,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value?.isEmpty == true) {
+                          return 'Please enter maximum cost';
+                        }
+                        if (double.parse(value ?? '0') <= double.parse(_minCostController.text)) {
+                          return 'Maximum cost should be greater than minimum cost';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Maximum Cost',
+                        errorMaxLines: 3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: ElevatedButton(
+                  child: Text('Submit'),
+                  onPressed: _submitForm,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -258,6 +288,10 @@ class _MyFormScreenState extends State<MyFormScreen> {
   Future<void> _submitForm() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
+
+    // if (_formKey.currentState?.validate() == true) {
+    //   print('valid');
+    // }
 
     var data = {
       'status': 'pending',
@@ -269,18 +303,16 @@ class _MyFormScreenState extends State<MyFormScreen> {
       'size': _size,
       'type': _type,
       'material': 'digital',
-      'min_cost': _minCost.toString(),
-      'max_cost': _maxCost.toString(),
+      'min_cost': _minCostController.text,
+      'max_cost': _maxCostController.text,
       'days': _endDate.difference(_startDate).inDays.toString(),
     };
-    final CollectionReference _productss =
-        FirebaseFirestore.instance.collection('orders');
+    final CollectionReference _productss = FirebaseFirestore.instance.collection('orders');
     var datas = await _productss.add(data);
     print(datas);
     // final ok = await Repository.makeOrder(data);
     // print(ok);
     // if (ok) {
     Navigator.of(context).pop();
-    // }
   }
 }
