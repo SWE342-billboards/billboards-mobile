@@ -1,6 +1,8 @@
 import 'package:demo/orders.dart';
 import 'package:demo/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'repository.dart';
 
@@ -158,16 +160,36 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState?.validate() == true) {
       final email = _emailController.text;
       final password = _passwordController.text;
-      final ok = await Repository.login(email, password);
-      print(ok);
-      if (ok) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('uid', userCredential.user!.uid);
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           return BillboardOrderListScreen();
         }));
-      } else {
-        _errorText = 'Email or password is incorrect!';
-        setState(() {});
+      } catch (e) {
+        const snackBar = SnackBar(
+          content: Text('Email or password is incorrect!'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+      // print(userCredential);
+      // final email = _emailController.text;
+      // final password = _passwordController.text;
+      // final ok = await Repository.login(email, password);
+      // print(ok);
+      // if (ok) {
+      //   Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      //     return BillboardOrderListScreen();
+      //   }));
+      // } else {
+      //   _errorText = 'Email or password is incorrect!';
+      //   setState(() {});
+      // }
     }
   }
 }

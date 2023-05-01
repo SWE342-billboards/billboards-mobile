@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'orders.dart';
 
 class Repository {
-  static int userId = 1;
+  static int userId = 2;
 
   static Future<bool> register(String email, String psw, String type) async {
     final url = Uri.http('10.0.2.2:3005', '/api/register');

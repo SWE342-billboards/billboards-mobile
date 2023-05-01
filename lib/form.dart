@@ -302,7 +302,7 @@ class _MyFormScreenState extends State<MyFormScreen> {
       'location': _location,
       'size': _size,
       'type': _type,
-      'material': 'digital',
+      'material': _material,
       'min_cost': _minCostController.text,
       'max_cost': _maxCostController.text,
       'days': _endDate.difference(_startDate).inDays.toString(),

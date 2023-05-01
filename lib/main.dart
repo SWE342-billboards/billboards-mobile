@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: BillboardOrderListScreen(),
+        body: (widget.uid == '') ? InitialScreen() : BillboardOrderListScreen(),
       ),
     );
   }

@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:demo/login.dart';
+import 'package:demo/orders.dart';
 import 'package:demo/repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final bool isUpdateProfile;
@@ -195,18 +198,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future _register() async {
     if (_formKey.currentState?.validate() == true) {
-      final email = _emailController.text;
-      final password = _passwordController.text;
-      final userType = _isCustomer ? 'customer' : 'manager';
-
-      final ok = await Repository.register(email, password, userType);
-      print(ok);
-
-      if (ok) {
-        Navigator.pop(context);
-      } else {
-        _errorText = 'Email is already in use!';
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('uid', userCredential.user!.uid);
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return BillboardOrderListScreen();
+        }));
+      } catch (e) {
+        print('ss');
       }
+      // final email = _emailController.text;
+      // final password = _passwordController.text;
+      // final userType = _isCustomer ? 'customer' : 'manager';
+
+      // final ok = await Repository.register(email, password, userType);
+      // print(ok);
+
+      // if (ok) {
+      //   Navigator.pop(context);
+      // } else {
+      //   _errorText = 'Email is already in use!';
+      // }
     }
 
     setState(() {

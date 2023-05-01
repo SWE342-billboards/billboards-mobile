@@ -117,7 +117,7 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
-          var orders = snapshot.data?.docs ?? [];
+          var orders = snapshot.data?.docs.where((u) => u['user_id'] == uid).toList() ?? [];
 
           if (orders.length == 0) {
             return Center(child: Text('No orders'));
