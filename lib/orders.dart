@@ -191,8 +191,7 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
     return '${date.day}.${date.month}.${date.year}';
   }
 
-  void _showOrderDetails(orders) {
-    var order = orders.data() as Map;
+  void _showOrderDetails(Map<String, dynamic> order) {
     showDialog(
       context: context,
       builder: (context) {
