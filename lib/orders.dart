@@ -117,18 +117,16 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
-          var orders = snapshot.data!;
+          var orders = snapshot.data?.docs ?? [];
 
-          if (orders.docs.length == 0) {
+          if (orders.length == 0) {
             return Center(child: Text('No orders'));
-          } 
+          }
 
           return ListView.builder(
-            itemCount: orders.docs.length,
+            itemCount: orders.length,
             itemBuilder: (context, index) {
-              final order = orders.docs[index];
-              print(order['orderId']);
-
+              final order = orders[index].data();
               if (order['user_id'] == uid) {
                 return InkWell(
                   onTap: () {
@@ -141,14 +139,15 @@ class _BillboardOrderListScreenState extends State<BillboardOrderListScreen> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            order['start_date'] + ' - ' + order['end_date'],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 16,
+                          if (order['start_date'] != null)
+                            Text(
+                              '${order['start_date']} - ${order['end_date']}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
                           Text(
                             'Cost: \$${order['min_cost']}',
                             style: TextStyle(
