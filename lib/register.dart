@@ -215,7 +215,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           return BillboardOrderListScreen();
         }));
       } catch (e) {
-        print('ss');
+        print(e);
+        if (e is FirebaseAuthException) {
+          _errorText = e.message;
+        }
       }
       // final email = _emailController.text;
       // final password = _passwordController.text;
@@ -227,7 +230,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       // if (ok) {
       //   Navigator.pop(context);
       // } else {
-      //   _errorText = 'Email is already in use!';
       // }
     }
 
