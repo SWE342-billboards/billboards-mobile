@@ -33,6 +33,20 @@ class _MyFormScreenState extends State<MyFormScreen> {
     'Almaty',
     'Nursultan',
     'Semei',
+    'Shymkent',
+    'Karaganda',
+    'Taraz',
+    'Aktobe',
+    'Pavlodar',
+    'Kostanay',
+    'Kyzylorda',
+    'Petropavlovsk',
+    'Aktau',
+    'Atyrau',
+    'Temirtau',
+    'Taldykorgan',
+    'Kokshetau',
+    'Turkestan',
   ];
 
   @override
@@ -289,30 +303,25 @@ class _MyFormScreenState extends State<MyFormScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
 
-    // if (_formKey.currentState?.validate() == true) {
-    //   print('valid');
-    // }
-
-    var data = {
-      'status': 'pending',
-      'orderId': now.microsecondsSinceEpoch.toString(),
-      'start_date': DateFormat('yyyy-MM-dd').format(_startDate),
-      'end_date': DateFormat('yyyy-MM-dd').format(_endDate),
-      'user_id': prefs.getString('uid'),
-      'location': _location,
-      'size': _size,
-      'type': _type,
-      'material': _material,
-      'min_cost': _minCostController.text,
-      'max_cost': _maxCostController.text,
-      'days': _endDate.difference(_startDate).inDays.toString(),
-    };
-    final CollectionReference _productss = FirebaseFirestore.instance.collection('orders');
-    var datas = await _productss.add(data);
-    print(datas);
-    // final ok = await Repository.makeOrder(data);
-    // print(ok);
-    // if (ok) {
-    Navigator.of(context).pop();
+    if (_formKey.currentState?.validate() == true) {
+      var data = {
+        'status': 'pending',
+        'orderId': now.microsecondsSinceEpoch.toString(),
+        'start_date': DateFormat('yyyy-MM-dd').format(_startDate),
+        'end_date': DateFormat('yyyy-MM-dd').format(_endDate),
+        'user_id': prefs.getString('uid'),
+        'location': _location,
+        'size': _size,
+        'type': _type,
+        'material': _material,
+        'min_cost': _minCostController.text,
+        'max_cost': _maxCostController.text,
+        'days': _endDate.difference(_startDate).inDays.toString(),
+      };
+      final CollectionReference _productss = FirebaseFirestore.instance.collection('orders');
+      var datas = await _productss.add(data);
+      print(datas);
+      Navigator.of(context).pop();
+    }
   }
 }
